@@ -13,7 +13,7 @@ var mysql = new Sequelize(config.mysql.database, config.mysql.user,config.mysql.
     pool: {
         max: 5,
         min: 0,
-        idle: 10000
+        idle: 10000 // 连接释放之前可以空闲的最长时间
     }
 })
 module.exports = mysql

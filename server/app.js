@@ -1,22 +1,29 @@
 var express = require('express');
-var bodyParser = require('body-parser')
-var cookieParser = require('cookie-parser');
+// 跨域cors
+var bodyParser = require('body-parser');
 var logger = require('morgan'); // 开发模式下log
 var path = require('path'); //路径
 var routes = require('./routes'); // 路由
 
+// 实例化express
 var app = express();
 
-// view engine setup
+// 设置模版目录
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-
 app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
 
+// 设置Json
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+//设置静态文件目录
+app.use(express.static(path.join(__dirname, 'public')));
+//注意：中间件的加载顺序很重要。如上面设置静态文件目录的中间件应该放到 routes(app) 之前加载，这样静态文件的请求就不会落到业务逻辑的路由里；
+
+// 配置跨域
+
+// 路由
 routes(app);
 
 // catch 404 and forward to error handler
