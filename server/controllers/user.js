@@ -1,4 +1,4 @@
-var co = require('co'); // 自动执行异步函数
+// var co = require('co'); // 自动执行异步函数
 var utils = require('../libs/utils'); // 工具类
 var User = require('../models/index').User; // 实体
 module.exports = {

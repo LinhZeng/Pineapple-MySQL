@@ -1,40 +1,38 @@
-// User用户表
 var Sequelize = require('sequelize'); // ORM框架
 var mysql = require('./mysql');
 
-var User = mysql.define('user', {
+var Work = mysql.define('work', {
     id: {
         type: Sequelize.INTEGER,
         allowNull: false,
 		primaryKey: true,
     },
-    account: {
-        type: Sequelize.STRING,
-        allowNull:true,
-        unique: true 
-    },
-    user_name: {
-        type: Sequelize.STRING,
-        allowNull:true,
-    },
-    user_url: {
+    name: {
         type: Sequelize.STRING,
         allowNull:true
     },
-    intro: {
+    description: {
         type: Sequelize.STRING,
         allowNull:true
     },
-    password: {
+    src: {
         type: Sequelize.STRING,
         allowNull:true
+    },
+    // type: {
+    //     type: Sequelize.STRING,
+    //     allowNull:true
+    // },
+    hot: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0
     }
 }, {
     freezeTableName: true, // 自定义表名, false时表明自动为复数
-    tableName: 'user',
+    tableName: 'work',
     timestamps: true, // 添加时间戳属性(updateAt, createdAt)
     createdAt: 'createDate', // 将createdAt字段改名, 为false表禁用
     updatedAt: 'updateDate',
-    comments: "User Table" // 描述
+    comments: "Work Table" // 描述
 });
-module.exports = User
+module.exports = Work
