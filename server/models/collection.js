@@ -5,15 +5,8 @@ var Collection = mysql.define('collection', {
     id: {
         type: Sequelize.INTEGER,
         allowNull: false,
-		primaryKey: true,
-    },
-    user_id: {
-        type: Sequelize.INTEGER,
-        allowNull:true
-    },
-    work_id: {
-        type: Sequelize.INTEGER,
-        allowNull:true
+        primaryKey: true,
+        autoIncrement: true
     },
     is_del: { // 1已删除 0未删除
         type: Sequelize.STRING(2),

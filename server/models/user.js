@@ -6,7 +6,8 @@ var User = mysql.define('user', {
     id: {
         type: Sequelize.INTEGER,
         allowNull: false,
-		primaryKey: true,
+        primaryKey: true,
+        autoIncrement: true
     },
     account: {
         type: Sequelize.STRING,

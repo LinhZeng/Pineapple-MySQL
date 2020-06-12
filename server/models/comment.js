@@ -5,7 +5,8 @@ var Comment = mysql.define('comment', {
     id: {
         type: Sequelize.INTEGER,
         allowNull: false,
-		primaryKey: true,
+        primaryKey: true,
+        autoIncrement: true
     },
     user_id: {
         type: Sequelize.INTEGER,

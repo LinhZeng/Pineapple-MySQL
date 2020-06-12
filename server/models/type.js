@@ -5,7 +5,8 @@ var Type = mysql.define('type', {
     id: {
         type: Sequelize.INTEGER,
         allowNull: false,
-		primaryKey: true,
+        primaryKey: true,
+        autoIncrement: true
     },
     name: {
         type: Sequelize.STRING,

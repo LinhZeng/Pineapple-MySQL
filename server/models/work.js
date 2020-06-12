@@ -5,7 +5,8 @@ var Work = mysql.define('work', {
     id: {
         type: Sequelize.INTEGER,
         allowNull: false,
-		primaryKey: true,
+        primaryKey: true,
+        autoIncrement: true
     },
     name: {
         type: Sequelize.STRING,
@@ -19,10 +20,6 @@ var Work = mysql.define('work', {
         type: Sequelize.STRING,
         allowNull:true
     },
-    // type: {
-    //     type: Sequelize.STRING,
-    //     allowNull:true
-    // },
     hot: {
         type: Sequelize.INTEGER,
         defaultValue: 0
