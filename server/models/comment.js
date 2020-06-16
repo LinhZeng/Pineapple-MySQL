@@ -8,17 +8,13 @@ var Comment = mysql.define('comment', {
         primaryKey: true,
         autoIncrement: true
     },
-    user_id: {
-        type: Sequelize.INTEGER,
-        allowNull:false
-    },
-    work_id: {
-        type: Sequelize.INTEGER,
-        allowNull:false
-    },
     content: {
         type: Sequelize.STRING,
         allowNull:false
+    },
+    is_del: {
+        type: Sequelize.STRING(2),
+        defaultValue: '0'
     }
 }, {
     freezeTableName: true, // 自定义表名, false时表明自动为复数

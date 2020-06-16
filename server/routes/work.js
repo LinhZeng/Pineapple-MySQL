@@ -23,5 +23,24 @@ router.post('/ownlist', function(req, res, next) {
     workDao.getOwnWorkList(req,res,next)
 }); 
 
+// 发布作品
+router.post('/addwork', function(req, res, next) {
+    workDao.addWork(req,res,next)
+}); 
+
+// 删除作品
+router.post('/deletework', function(req, res, next) {
+    workDao.deleteWork(req,res,next)
+}); 
+
+// 评论
+router.post('/addcomment', function(req, res, next) {
+    workDao.addComment(req,res,next)
+});
+
+// 删除评论
+router.post('/delcomment', function(req,res,next) {
+    workDao.delComment(req,res,next)
+})
 
 module.exports = router;

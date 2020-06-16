@@ -23,6 +23,10 @@ var Work = mysql.define('work', {
     hot: {
         type: Sequelize.INTEGER,
         defaultValue: 0
+    },
+    is_del: {
+        type: Sequelize.STRING(2),
+        defaultValue: '0'
     }
 }, {
     freezeTableName: true, // 自定义表名, false时表明自动为复数

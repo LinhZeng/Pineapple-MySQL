@@ -103,6 +103,7 @@ module.exports = {
             } else {
                 utils.handleJson({
                     response: res,
+                    result: [],
                     msg: '未收藏',
                 });
             }
