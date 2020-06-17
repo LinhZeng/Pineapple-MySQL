@@ -13,4 +13,24 @@ router.post('/userinfo', function(req, res, next) {
   userDao.getUserInfo(req,res,next)
 });
 
+// 注册
+router.post('/register', function(req, res, next) {
+  userDao.register(req,res,next)
+});
+
+// 登录
+router.post('/login', function(req, res, next) {
+  userDao.login(req,res,next)
+});
+
+// 修改个人信息
+router.post('/editinfo', function(req, res, next) {
+  userDao.updateUserInfo(req,res,next)
+});
+
+// 修改密码
+router.post('/editpsw', function(req, res, next) {
+  userDao.updateUserPSW(req,res,next)
+});
+
 module.exports = router;

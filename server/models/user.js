@@ -24,7 +24,7 @@ var User = mysql.define('user', {
     },
     intro: {
         type: Sequelize.STRING,
-        allowNull:true
+        defaultValue: '暂无简介'
     },
     password: {
         type: Sequelize.STRING,
