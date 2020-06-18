@@ -17,7 +17,7 @@ module.exports = {
                 },
             })
         }).catch(function(err){
-            utils.handleJson({
+            utils.handleError({
                 response:res,
                 error: err
             })
@@ -53,7 +53,7 @@ module.exports = {
                 },
             })
         }).catch(function(err){
-            utils.handleJson({
+            utils.handleError({
                 response:res,
                 error: err
             })
@@ -88,7 +88,7 @@ module.exports = {
 				});
             }
         }).catch(function(err){
-            utils.handleJson({
+            utils.handleError({
                 response:res,
                 error: err
             })
@@ -116,7 +116,7 @@ module.exports = {
                 },
             })
         }).catch(function(err){
-            utils.handleJson({
+            utils.handleError({
                 response:res,
                 error: err
             })
@@ -144,7 +144,7 @@ module.exports = {
                 })
             })
         }).catch(function(err){
-            utils.handleJson({
+            utils.handleError({
                 response:res,
                 error: err
             })
@@ -166,7 +166,7 @@ module.exports = {
                 msg:'success'
             })
         }).catch(function(err){
-            utils.handleJson({
+            utils.handleError({
                 response:res,
                 error: err
             })
@@ -185,7 +185,7 @@ module.exports = {
                 result: [],
             })
         }).catch(err=> {
-            utils.handleJson({
+            utils.handleError({
                 response: res,
                 error: err
             })
@@ -205,7 +205,7 @@ module.exports = {
                 result: []
             })
         }).catch(err => {
-            utils.handleJson({
+            utils.handleError({
                 response: res,
                 error:err
             })

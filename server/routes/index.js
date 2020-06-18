@@ -1,5 +1,6 @@
 module.exports = function(app) {
   // router分流
+  app.use('/common',require('./common'));
   app.use('/user',require('./user'));
   app.use('/work',require('./work'));
   app.use('/collection',require('./collection'));

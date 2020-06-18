@@ -31,7 +31,7 @@ module.exports = {
 				});
             }
         }).catch(function(err){
-            utils.handleJson({
+            utils.handleError({
                 response:res,
                 error: err
             })
@@ -76,7 +76,7 @@ module.exports = {
             }
         }).catch(function(err){
             console.log(err)
-            utils.handleJson({
+            utils.handleError({
                 response:res,
                 error: err
             })
@@ -109,7 +109,7 @@ module.exports = {
             }
         }).catch(function(err){
             console.log(err)
-            utils.handleJson({
+            utils.handleError({
                 response:res,
                 error: err
             })
@@ -141,7 +141,7 @@ module.exports = {
                 },
             })
         }).catch(function(err){
-            utils.handleJson({
+            utils.handleError({
                 response:res,
                 error: err
             })

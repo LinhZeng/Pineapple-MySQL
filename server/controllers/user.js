@@ -21,7 +21,7 @@ module.exports = {
                 },
             })
         }).catch(function(err){
-            utils.handleJson({
+            utils.handleError({
                 response:res,
                 error: err
             })
@@ -51,7 +51,7 @@ module.exports = {
                 result: userResult
             })
         }).catch(function(err){
-            utils.handleJson({
+            utils.handleError({
                 response:res,
                 error: err
             })
@@ -172,7 +172,7 @@ module.exports = {
                 })
             }
         }).catch(err => {
-            utils.handleJson({
+            utils.handleError({
                 response: res,
                 error: err
             })
@@ -197,7 +197,7 @@ module.exports = {
                 })
             }
         }).catch(err => {
-            utils.handleJson({
+            utils.handleError({
                 response: res,
                 error: err
             })
