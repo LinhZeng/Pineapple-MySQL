@@ -15,5 +15,10 @@ module.exports = {
                 result: ''
             })
         }
+    },
+    trim: function(str) {
+        if(str) {
+            return str.replace(/(^\s*)|(\s*$)/g, "");
+        } else return '';
     }
 }

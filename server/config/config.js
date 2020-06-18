@@ -7,6 +7,9 @@ var config = {
         password: '',
         database: 'pineapple',
         port: 3306
+    },
+    token: {
+        secretOrPrivateKey: 'pasecret'
     }
 }
 module.exports = config;

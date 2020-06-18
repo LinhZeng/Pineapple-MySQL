@@ -1,5 +1,7 @@
 var co = require('co'); // 自动执行异步函数
-var sequelize = require('sequelize')
+// var sequelize = require('sequelize')
+var md5 = require('blueimp-md5'); // md5加密
+var tokenService = require('../services/token') // token服务
 var utils = require('../libs/utils'); // 工具类
 var User = require('../models/index').User; // 实体
 var Work = require('../models/index').Work;
@@ -58,22 +60,38 @@ module.exports = {
 
     // 注册
     register: function(req,res,next){
+        var account = utils.trim(req.body.account);
+        var password = utils.trim(req.body.password);
+        if(!account){
+            utils.handleJson({
+                response: res,
+                msg: '账号不能为空'
+            })
+            return;
+        }
+        if(!password){
+            utils.handleJson({
+                response: res,
+                msg: '密码不能为空'
+            })
+            return;
+        }
         co(function*() {
             var resUser = yield User.findOne({
-                where: {account: req.body.account}
+                where: {account: account}
             })
             if(resUser) {
                 utils.handleJson({
                     response: res,
-                    msg: '该用户名已存在'
+                    msg: '该账号已存在'
                 })
                 return;
             }
             var newUser = yield User.create({
-                account: req.body.account,
-                user_name: req.body.account,
-                password: req.body.password,
-                // user_url: req.body.user_url
+                account: account,
+                user_name: account,
+                password: md5(password),
+                user_url: '/static/img/default.png'
             })
             console.log(newUser)
             if(newUser) {
@@ -88,6 +106,22 @@ module.exports = {
 
     // 登录
     login: function(req,res,next){
+        var account = utils.trim(req.body.account);
+        var password = utils.trim(req.body.password);
+        if(!account){
+            utils.handleJson({
+                response: res,
+                msg: '账号不能为空'
+            })
+            return;
+        }
+        if(!password){
+            utils.handleJson({
+                response: res,
+                msg: '密码不能为空'
+            })
+            return;
+        }
         co(function*(){
             var resUser = yield User.findOne({
                 where: {account: req.body.account}
@@ -95,20 +129,25 @@ module.exports = {
             if(!resUser) {
                 utils.handleJson({
                     response: res,
-                    msg: '该用户不存在'
+                    msg: '该账号不存在'
                 })
                 return;
             }
-            if(resUser.dataValues.password != req.body.password) {
+            if(resUser.dataValues.password != md5(password)) {
                 utils.handleJson({
                     response: res,
                     msg: '密码不正确'
                 })
                 return;
             }
+            var loguser = resUser.dataValues;
+            delete loguser.password
             utils.handleJson({
                 response: res,
-                result: [],
+                result: {
+                    user:loguser,
+                    token: tokenService.setToken({userid: loguser.id})
+                },
                 msg: 'OK'
             })
         })
@@ -142,9 +181,10 @@ module.exports = {
 
     // 修改密码
     updateUserPSW: function(req,res,next) {
+        var password = utils.trim(req.body.password)
         co(function*(){
             var resUser = yield User.update({
-                password: req.body.password
+                password: md5(password)
             },{
                 where: {id: req.body.id}
             })
