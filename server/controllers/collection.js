@@ -118,6 +118,8 @@ module.exports = {
 
     // 查询收藏作品
     getCollectionList: function(req,res,next) {
+        var limit = req.body.limit || 0; // 一页多少条
+        var offset = limit * ( (req.body.page||0) - 1);
         Collection.findAndCountAll({
             where: {
                 userId: req.body.id,
@@ -131,6 +133,8 @@ module.exports = {
                     through: {attributes: []}, // 排除中间表
                 }],
             }],
+            limit: limit,
+            offset: offset, // 跳过多少条
             order: [['updateDate', 'DESC']]
         }).then(result => {
             var collectionList = result.rows || [];

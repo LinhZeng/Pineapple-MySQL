@@ -16,3 +16,5 @@ router.post('/upload',fileService.setFileUpload({
         }
     })
 })
+
+module.exports = router;

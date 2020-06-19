@@ -26,6 +26,8 @@ module.exports = {
     
     // 分类排序查询
     getWorkList: function(req,res,next) {
+        var limit = req.body.limit || 0; // 一页多少条
+        var offset = limit * ( (req.body.page||0) - 1);
         var req_order = [];
         if(req.body.order==0){ // 按时间排序
             req_order = [['createDate', 'DESC']]
@@ -43,6 +45,8 @@ module.exports = {
                 through: {attributes: []}, // 排除中间表
                 where: req_type
             }],
+            limit: limit,
+            offset: offset, // 跳过多少条
             order: req_order
         }).then(result => {
             var userList = result.rows || [];
@@ -97,6 +101,8 @@ module.exports = {
 
     // 查询发布作品
     getOwnWorkList: function(req,res,next) {
+        var limit = req.body.limit || 0; // 一页多少条
+        var offset = limit * ( (req.body.page||0) - 1);
         Work.findAndCountAll({
             where:{
                 userId: req.body.id
@@ -106,6 +112,8 @@ module.exports = {
                 attributes:['id','name'], 
                 through: {attributes: []}, // 排除中间表
             }],
+            limit: limit,
+            offset: offset, // 跳过多少条
             order: [['createDate','DESC']]
         }).then(result => {
             var workList = result.rows || [];

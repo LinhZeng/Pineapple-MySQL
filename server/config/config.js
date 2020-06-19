@@ -1,4 +1,6 @@
 // 配置文件
+var path = require('path');
+
 var config = {
     // env: 'dev', // 当前环境，便于后面业务中判断
     mysql: {
@@ -14,8 +16,8 @@ var config = {
     file: { // 文件配置
         path: { // 路径
             upload: { // 上传路径
-                default: path.join(_dirname, '../public/attchments/default/'),//默认
-                avatar: path.join(_dirname, '../public/attchments/avatar/') // 头像
+                default: path.join(__dirname, '../public/attchments/default/'),//默认
+                avatar: path.join(__dirname, '../public/attchments/avatar/') // 头像
             }
         },
         limit: { // 限制
