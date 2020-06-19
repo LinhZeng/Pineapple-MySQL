@@ -26,27 +26,27 @@
         </el-input>
         <div class="login_btn" v-if="unlisted" @click="panel_open=true">登录</div>
         <div class="nav_user"  v-if="unlisted==false">
-          <img class="user_avatar" :src="userData.userinfo.user_url"/>
+          <img class="user_avatar" :src="userData.user_url"/>
           <div class="user_panel">
             <p class="user_name">
-              {{userData.userinfo.user_name}}
+              {{userData.user_name}}
               <!-- <span :class="[userInfo.gender > 0 ?'el-icon-male':'el-icon-female']"></span> -->
             </p>
 						<div class="get_user_nums">
               <div class="nums_item">
                 <p>发布</p>
-                <span>{{userData.own_num}}</span>
+                <span>{{userData.work_count}}</span>
               </div>
               <div class="nums_item">
                 <p>采集</p>
-                <span>{{userData.collection_num}}</span>
+                <span>{{userData.collection_count}}</span>
               </div>
             </div>
 						<div class="user_item">
-              <span>pineaID：{{userData.userinfo.account}}</span>
+              <span>pineaID：{{userData.account}}</span>
             </div>
             <div class="user_item">
-              <span>简介：{{userData.userinfo.intro}}</span>
+              <span>简介：{{userData.intro}}</span>
             </div>
 						 <router-link class="use_info" to="/userinfo" tag="div">
               <span class="iconfont iconyonghu"></span>我的主页
@@ -110,19 +110,16 @@ export default {
   },
   created() {
     //localStorage.clear();
-    console.log(getLocalStorage('user_id'))
     if(getLocalStorage('user_id') == null) {
       this.unlisted = true;
     } else {
-      this.$axios.post("/api/userinfo",{
+      this.$axios.post("/api/user/userinfo",{
         id: getLocalStorage('user_id')
       }).then(res => {
         console.log(res)
-        this.userData = res.data;
+        this.userData = res.data.result;
         this.unlisted = false;
-        console.log(this.userData)
-      })
-      .catch(err=> {
+      }).catch(err=> {
         console.log(err)
       });
     }
@@ -137,15 +134,15 @@ export default {
     },
     onSubmit(){
       var req_url; 
-      if(this.activeName='登录') req_url = '/api/login';
-      else req_url = '/api/register';
+      if(this.activeName='登录') req_url = '/api/user/login';
+      else req_url = '/api/user/register';
       this.$axios.post(req_url,{
         account: this.form.account,
         password: this.form.password,
       }).then(res => {
         console.log(res)
-        if(res.data.status<0) {
-          this.$message.error(res.data.message);
+        if(res.data.code<0) {
+          this.$message.error(res.data.msg);
         } else {
           this.$message({
             message: this.activeName + '成功',
@@ -153,11 +150,13 @@ export default {
           });
           this.resetForm();
           this.panel_open=false;
-          setLocalStorage('account',res.data[0].account);
-          setLocalStorage('user_id',res.data[0]._id);
-          setLocalStorage('user_name',res.data[0].user_name);
-          setLocalStorage('intro',res.data[0].intro);
-          setLocalStorage('user_url',res.data[0].user_url);
+          setLocalStorage('account',res.data.result.user.account);
+          setLocalStorage('user_id',res.data.result.user.id);
+          setLocalStorage('user_name',res.data.result.user.user_name);
+          setLocalStorage('intro',res.data.result.user.intro);
+          setLocalStorage('user_url',res.data.result.user.user_url);
+          setLocalStorage('token',res.data.result.token.token);
+          this.userData = res.data.result.user;
           this.unlisted = false;
         }
       })

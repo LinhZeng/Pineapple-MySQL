@@ -1,9 +1,7 @@
 // token服务
 var jwt = require('jsonwebtoken');
 var config = require('../config/config');
-const user = require('../controllers/user');
-const e = require('express');
-// var Promise = require('bluebird');
+var Promise = require('bluebird');
 
 module.exports = {
     setToken: function(payload){
@@ -12,7 +10,7 @@ module.exports = {
         return {
             token: token,
             expiresIn: expiresIn
-        }
+        };
     },
     verifyToken: function(token, userid){
         return new Promise(function(resolve, reject){

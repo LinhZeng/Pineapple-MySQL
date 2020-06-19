@@ -4,11 +4,11 @@
     <div class="main">
       <div class="tag_menu">
         <div class="switch">
-          <div :class="[{active:isactive},'item']" @click="search(0,'全部')">最新</div>
-          <div :class="[{active:!isactive},'item']" @click="search(1,'全部')">最热</div>
+          <div :class="[{active:isactive},'item']" @click="search(0,actindex)">最新</div>
+          <div :class="[{active:!isactive},'item']" @click="search(1,actindex)">最热</div>
         </div>
         <div class="tag_list">
-          <div :class="[{active:actindex==tag},'item']" v-for="tag in tags" :key="tag" @click="search(0,tag)">{{ tag }}</div>
+          <div :class="[{active:actindex==tag.id},'item']" v-for="tag in tags" :key="tag.id" @click="search(!isactive,tag.id)">{{ tag.name }}</div>
         </div>
       </div>
       <waterfall :imgsArr="dataArr" @scrollReachBottom="getData" @click="jumpTo" class="waterfall" :imgWidth="236" :gap="15" :maxCols="6">
@@ -16,13 +16,13 @@
           <p class="title">{{props.value.name}}</p>
           <p class="description">{{props.value.description}}</p>
           <div class="author_info">
-            <el-avatar :src="props.value.author.user_url" class="author_avatar"></el-avatar>
+            <el-avatar :src="props.value.user.user_url" class="author_avatar"></el-avatar>
             <div class="info">
               <div class="item">
-                {{props.value.author.user_name}}
+                {{props.value.user.user_name}}
                 <span class="gray">采集到</span>
               </div>
-              <div class="item"><span v-for="tag in props.value.type" :key="tag">{{tag}} </span></div>
+              <div class="item"><span v-for="tag in props.value.types" :key="tag.id">{{tag.name}} </span></div>
             </div>
             <div class="right hot">
               <i class="el-icon-star-on"></i>{{props.value.hot}}
@@ -43,35 +43,37 @@ export default {
     return {
       dataArr: [],
       isactive: true,
-      actindex: '全部',
+      actindex: 1,
       tags:[
-        '全部',
-        '平面',
-        'UI/UX',
-        '插画',
-        '动漫',
-        '游戏',
-        '摄影',
-        '工业设计',
-        '建筑设计',
-        '家居/家装',
-        '手工/布艺',
-        '服装设计'
+        // '全部',
+        // '平面',
+        // 'UI/UX',
+        // '插画',
+        // '动漫',
+        // '游戏',
+        // '摄影',
+        // '工业设计',
+        // '建筑设计',
+        // '家居/家装',
+        // '手工/布艺',
+        // '服装设计'
       ]
     };
   },
   methods: {
-    search(a,name) {
+    search(a,typeid) {
       if (a) {
         this.isactive = false;
       } else this.isactive = true;
-      this.actindex = name;
-      this.$axios.post("/api/works",{
-        type: a,
-        name: name,
+      this.actindex = typeid;
+      this.$axios.post("/api/work/list",{
+        type: typeid,
+        order: a,
+        limit: 30,
+        page: 1
       }).then(res => {
-        console.log(res)
-        this.dataArr = res.data;
+        this.dataArr = res.data.result.list;
+        console.log(this.dataArr)
       })
       .catch(err=> {
         console.log(err)
@@ -82,14 +84,21 @@ export default {
       event.preventDefault();
       let routeUrl = this.$router.resolve({
         path: "/detail",
-        query: { id: value._id }
+        query: { id: value.id }
       });
       window.open(routeUrl.href, "_blank");
     },
     getData() {}
   },
   created() {
-    this.search(0,'全部');
+    this.$axios.post("/api/work/taglist",{
+    }).then(res => {
+      this.tags = res.data.result.list;
+    })
+    .catch(err=> {
+      console.log(err)
+    });
+    this.search(0,1);
   },
   components: {
     waterfall,

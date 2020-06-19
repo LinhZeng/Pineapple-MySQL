@@ -17,15 +17,15 @@
         <el-button plain icon="el-icon-zoom-in" class="right"></el-button>
         <div class="pic_title">{{data.name}}</div>
         <img :src="data.src">
-        <el-tag v-for="tag in data.type" :key="tag">{{ tag }}</el-tag>
+        <el-tag v-for="tag in data.types" :key="tag.id">{{ tag.name }}</el-tag>
         <el-button type="primary" icon="el-icon-star-on" class="collected_btn right" v-if="collection.status" @click="collect">{{data.hot}}</el-button>
         <el-button type="primary" icon="el-icon-star-off" class="right" v-else @click="collect">{{data.hot}}</el-button>
       </div>
       <div class="author">
-        <img :src=data.author.user_url class="author_avatar">
+        <img :src=data.user.user_url class="author_avatar">
         <div class="user_info">
-          <div class="name">{{ data.author.user_name }}</div>
-          <div>发布于 {{ data.date }}</div>
+          <div class="name">{{ data.user.user_name }}</div>
+          <div>发布于 {{ data.createDate }}</div>
         </div>
         <div class="description">{{ data.description }}</div>
         <div class="line"></div>
@@ -42,14 +42,14 @@
           <el-button class="comment-btn" type="primary" @click="comment(1,0)">评论</el-button>
         </div>
         <div class="comments" v-if="data.comments">
-          <div class="comment-item" v-for="(item,index) in data.comments" :key="index">
-              <img :src="item.user_url" >
+          <div class="comment-item" v-for="item in data.comments" :key="item.id">
+              <img :src="item.user.user_url" >
               <div class="comment-content">
-                  <span class="content-username">{{ item.user_name }}</span>
+                  <span class="content-username">{{ item.user.user_name }}</span>
                   <span>: {{ item.content }}</span>
               </div>
-              <div class="comment-time">{{ item.create_time }}</div>
-              <i class="el-icon-delete" @click="comment(0,index)" v-if="item.user_id == user.user_id">删除</i>
+              <div class="comment-time">{{ item.createDate }}</div>
+              <i class="el-icon-delete" @click="comment(0,index)" v-if="item.user.id == user.user_id">删除</i>
           </div>
         </div>
       </div>
@@ -127,11 +127,11 @@ export default {
     }
   },
   created() {
-    this.$axios.post("/api/workdetail",{ // 获取详情
+    this.$axios.post("/api/work/detail",{ // 获取详情
       id: this.$route.query.id
     }).then(res => {
       //console.log(res)
-      this.data = res.data;
+      this.data = res.data.result.work;
       this.data.type.forEach(e => {
         this.$axios.post("/api/taglist",{ // 标签列表
           tag: e

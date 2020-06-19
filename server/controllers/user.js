@@ -33,6 +33,7 @@ module.exports = {
         co(function*() {
             var userResult = yield User.findOne({
                 where: {id: req.body.id},
+                attributes: {exclude:['password']}
                 // attributes: {include:[
                 //     [sequelize.fn('COUNT',sequelize.col('works.id')),'work_count'],
                 // ]},
@@ -105,7 +106,7 @@ module.exports = {
     },
 
     // 登录
-    login: function(req,res,next){
+    login: function(req,res,next){ 
         var account = utils.trim(req.body.account);
         var password = utils.trim(req.body.password);
         if(!account){
@@ -149,6 +150,12 @@ module.exports = {
                     token: tokenService.setToken({userid: loguser.id})
                 },
                 msg: 'OK'
+            })
+        }).catch(err => {
+            console.log(err)
+            utils.handleError({
+                response: res,
+                error: err
             })
         })
     },

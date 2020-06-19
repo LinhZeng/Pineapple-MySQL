@@ -6,7 +6,7 @@
       <div class="tag_checkbox">
         请选择至少一个分类：
         <el-checkbox-group v-model="checkedTags" size="small">
-          <el-checkbox border v-for="item in tags" :key="item" :label="item">{{ item }}</el-checkbox>
+          <el-checkbox border v-if="item.id!=1" v-for="item in tags" :key="item.id" :label="item.id">{{ item.name }}</el-checkbox>
         </el-checkbox-group>
       </div>
       <el-input class="description" type="textarea" placeholder="描述该作品（不超过200字）" v-model="description" maxlength="200" show-word-limit rows="9"></el-input>
@@ -38,47 +38,33 @@ export default {
   data() {
     return {
       title: "",
-      tags: [
-        "平面",
-        "UI/UX",
-        "插画",
-        "动漫",
-        "游戏",
-        "摄影",
-        "工业设计",
-        "建筑设计",
-        "家居/家装",
-        "手工/布艺",
-        "服装设计"
-      ],
+      tags: [],
       checkedTags: [],
 			description: "",
 			imageUrl: ''
     };
   },
   methods: {
-    formatDateTime(date) {
-      var y = date.getFullYear();
-        var m = date.getMonth() + 1;
-        m = m < 10 ? ('0' + m) : m;
-        var d = date.getDate();
-        d = d < 10 ? ('0' + d) : d;
-        var h = date.getHours();
-        h=h < 10 ? ('0' + h) : h;
-        var minute = date.getMinutes();
-        minute = minute < 10 ? ('0' + minute) : minute;
-        var second=date.getSeconds();
-        second=second < 10 ? ('0' + second) : second;
-        return y + '-' + m + '-' + d+' '+h+':'+minute+':'+second;
+		imgchange(file) {
+      var formData = new FormData()
+      formData.append("file", file.raw)
+      var config = {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      }
+      this.$axios.post("/api/common/upload", formData, config).then((res)=> {
+        var urlname=`http://localhost:3000/attchments/work/${res.data.result.url}`;
+        this.imageUrl = urlname;
+      })
     },
-		imgchange() {},
     onSubmit() {
-      this.$axios.post("/api/addpic",{
+      console.log(this.checkedTags)
+      this.$axios.post("/api/work/addwork",{
         name: this.title,
         description: this.description,
         src: this.imageUrl,
-        user_id: getLocalStorage('user_id'),
-        date: this.formatDateTime(new Date()),
+        userId: getLocalStorage('user_id'),
         type: this.checkedTags,
       }).then(res => {
         console.log(res)
@@ -92,7 +78,16 @@ export default {
         console.log(err)
       });
     }
-	},
+  },
+  created(){
+    this.$axios.post("/api/work/taglist",{
+    }).then(res => {
+      this.tags = res.data.result.list;
+    })
+    .catch(err=> {
+      console.log(err)
+    });
+  },
   components: {
     Nav
   }

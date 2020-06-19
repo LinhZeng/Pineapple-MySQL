@@ -3,6 +3,7 @@ var utils = require('../libs/utils'); // 工具类
 var Work = require('../models/index').Work; // 实体
 var Type = require('../models/index').Type; 
 var Comment = require('../models/index').Comment;
+var User = require('../models/index').User;
 
 module.exports = {
     // 种类查询
@@ -35,7 +36,7 @@ module.exports = {
             req_order = [['hot', 'DESC']]
         }
         var req_type={};
-        if(req.body.type != 0) { // 按分类排序，0代表全部
+        if(req.body.type > 1) { // 按分类排序，1代表全部
             req_type = {id: req.body.type}
         }
         Work.findAndCountAll({
@@ -44,6 +45,9 @@ module.exports = {
                 attributes:['id','name'], 
                 through: {attributes: []}, // 排除中间表
                 where: req_type
+            },{
+                model:User, 
+                attributes:['id','user_name','user_url']
             }],
             limit: limit,
             offset: offset, // 跳过多少条
@@ -74,7 +78,14 @@ module.exports = {
             },{ 
                 model:Comment, 
                 where: {is_del:'0'},
-                required: false // 外连接
+                required: false, // 外连接
+                include: [{
+                    model: User,
+                    attributes:['id','user_name','user_url']
+                }]
+            }, {
+                model:User, 
+                attributes:['id','user_name','user_url'], 
             }],
             where: {id:req.body.id}
         }).then(result => {
