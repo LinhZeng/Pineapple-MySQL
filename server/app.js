@@ -1,9 +1,10 @@
 var express = require('express');
-// 跨域cors
+var cors = require('cors')// 跨域cors
 var bodyParser = require('body-parser');
 var logger = require('morgan'); // 开发模式下log
 var path = require('path'); //路径
 var routes = require('./routes'); // 路由
+const config = require('./config/config');
 
 // 实例化express
 var app = express();
@@ -22,6 +23,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 //注意：中间件的加载顺序很重要。如上面设置静态文件目录的中间件应该放到 routes(app) 之前加载，这样静态文件的请求就不会落到业务逻辑的路由里；
 
 // 配置跨域
+app.use(cors({
+  origin: config.cors.origin,
+  methods: "PUT,POST,GET,DELETE,OPTIONS",
+}))
 
 // 路由
 routes(app);

@@ -44,20 +44,7 @@ export default {
       dataArr: [],
       isactive: true,
       actindex: 1,
-      tags:[
-        // '全部',
-        // '平面',
-        // 'UI/UX',
-        // '插画',
-        // '动漫',
-        // '游戏',
-        // '摄影',
-        // '工业设计',
-        // '建筑设计',
-        // '家居/家装',
-        // '手工/布艺',
-        // '服装设计'
-      ]
+      tags:[]
     };
   },
   methods: {
@@ -66,14 +53,14 @@ export default {
         this.isactive = false;
       } else this.isactive = true;
       this.actindex = typeid;
-      this.$axios.post("/api/work/list",{
+      this.$axios.post("/work/list",{
         type: typeid,
         order: a,
         limit: 30,
         page: 1
       }).then(res => {
-        this.dataArr = res.data.result.list;
-        console.log(this.dataArr)
+        console.log(res)
+        this.dataArr = res.result.list;
       })
       .catch(err=> {
         console.log(err)
@@ -91,7 +78,7 @@ export default {
     getData() {}
   },
   created() {
-    this.$axios.post("/api/work/taglist",{
+    this.$axios.post("/work/taglist",{
     }).then(res => {
       this.tags = res.data.result.list;
     })

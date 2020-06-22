@@ -89,6 +89,7 @@
 import img_url from "../assets/logo.png";
 import {setLocalStorage} from "../utils/auth";
 import {getLocalStorage} from "../utils/auth";
+import {setToken} from "../utils/auth";
 
 export default {
   name: "nav",
@@ -113,11 +114,11 @@ export default {
     if(getLocalStorage('user_id') == null) {
       this.unlisted = true;
     } else {
-      this.$axios.post("/api/user/userinfo",{
+      this.$axios.post("/user/userinfo",{
         id: getLocalStorage('user_id')
       }).then(res => {
         console.log(res)
-        this.userData = res.data.result;
+        this.userData = res.result;
         this.unlisted = false;
       }).catch(err=> {
         console.log(err)
@@ -134,15 +135,15 @@ export default {
     },
     onSubmit(){
       var req_url; 
-      if(this.activeName='登录') req_url = '/api/user/login';
-      else req_url = '/api/user/register';
+      if(this.activeName='登录') req_url = '/user/login';
+      else req_url = '/user/register';
       this.$axios.post(req_url,{
         account: this.form.account,
         password: this.form.password,
       }).then(res => {
         console.log(res)
-        if(res.data.code<0) {
-          this.$message.error(res.data.msg);
+        if(res.code<0) {
+          this.$message.error(res.msg);
         } else {
           this.$message({
             message: this.activeName + '成功',
@@ -150,13 +151,14 @@ export default {
           });
           this.resetForm();
           this.panel_open=false;
-          setLocalStorage('account',res.data.result.user.account);
-          setLocalStorage('user_id',res.data.result.user.id);
-          setLocalStorage('user_name',res.data.result.user.user_name);
-          setLocalStorage('intro',res.data.result.user.intro);
-          setLocalStorage('user_url',res.data.result.user.user_url);
-          setLocalStorage('token',res.data.result.token.token);
-          this.userData = res.data.result.user;
+          setLocalStorage('account',res.result.user.account);
+          setLocalStorage('user_id',res.result.user.id);
+          setLocalStorage('user_name',res.result.user.user_name);
+          setLocalStorage('intro',res.result.user.intro);
+          setLocalStorage('user_url',res.result.user.user_url);
+          setLocalStorage('token',res.result.token.token);
+          setToken(res.result.token.token)
+          this.userData = res.result.user;
           this.unlisted = false;
         }
       })

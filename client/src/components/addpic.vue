@@ -53,14 +53,14 @@ export default {
           "Content-Type": "multipart/form-data"
         }
       }
-      this.$axios.post("/api/common/upload", formData, config).then((res)=> {
+      this.$axios.post("/common/upload", formData, config).then((res)=> {
         var urlname=`http://localhost:3000/attchments/work/${res.data.result.url}`;
         this.imageUrl = urlname;
       })
     },
     onSubmit() {
       console.log(this.checkedTags)
-      this.$axios.post("/api/work/addwork",{
+      this.$axios.post("/work/addwork",{
         name: this.title,
         description: this.description,
         src: this.imageUrl,
@@ -80,7 +80,7 @@ export default {
     }
   },
   created(){
-    this.$axios.post("/api/work/taglist",{
+    this.$axios.post("/work/taglist",{
     }).then(res => {
       this.tags = res.data.result.list;
     })

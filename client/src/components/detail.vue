@@ -76,7 +76,7 @@ export default {
   },
   methods: {
     collect() {
-      this.$axios.post("/api/collect",{ // 收藏/取消收藏
+      this.$axios.post("/collect",{ // 收藏/取消收藏
         id: this.collection.id,
         user_id: this.user.user_id,
         work_id: this.$route.query.id
@@ -115,7 +115,7 @@ export default {
         this.data.comments.splice(index,1);
       }
       console.log(this.data.comments)
-      this.$axios.post("/api/editwork",{
+      this.$axios.post("/editwork",{
         id: this.data._id,
         comments: this.data.comments
       }).then(res => {
@@ -127,13 +127,13 @@ export default {
     }
   },
   created() {
-    this.$axios.post("/api/work/detail",{ // 获取详情
+    this.$axios.post("/work/detail",{ // 获取详情
       id: this.$route.query.id
     }).then(res => {
       //console.log(res)
       this.data = res.data.result.work;
       this.data.type.forEach(e => {
-        this.$axios.post("/api/taglist",{ // 标签列表
+        this.$axios.post("/taglist",{ // 标签列表
           tag: e
         }).then(ress => {
           console.log(ress)
@@ -159,7 +159,7 @@ export default {
         user_url: getLocalStorage('user_url'),
       }
     }
-    this.$axios.post("/api/iscollected",{ // 是否收藏
+    this.$axios.post("/iscollected",{ // 是否收藏
       user_id: this.user.user_id,
       work_id: this.$route.query.id
     }).then(res => {

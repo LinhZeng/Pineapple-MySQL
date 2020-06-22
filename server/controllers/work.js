@@ -40,6 +40,7 @@ module.exports = {
             req_type = {id: req.body.type}
         }
         Work.findAndCountAll({
+            where: {is_del: 0},
             include: [{ 
                 model:Type, 
                 attributes:['id','name'], 
@@ -122,6 +123,9 @@ module.exports = {
                 model:Type, 
                 attributes:['id','name'], 
                 through: {attributes: []}, // 排除中间表
+            },{
+                model:User, 
+                attributes:['id','user_name','user_url'], 
             }],
             limit: limit,
             offset: offset, // 跳过多少条

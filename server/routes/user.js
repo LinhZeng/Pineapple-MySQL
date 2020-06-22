@@ -10,7 +10,7 @@ router.get('/list', function(req, res, next) {
 });
 
 // 查询单个用户信息
-router.post('/userinfo', function(req, res, next) {
+router.post('/userinfo', tokenService.verifyRouterToken,function(req, res, next) {
   userDao.getUserInfo(req,res,next)
 });
 

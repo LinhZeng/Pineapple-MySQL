@@ -4,16 +4,16 @@
     <div class="main">
         <div class="user_info">
             <div class="avatar">
-                <img :src="author.userinfo.user_url">
+                <img :src="author.user_url">
             </div>
-            <div class="name">{{ author.userinfo.user_name }}</div>
-            <div class="intro">pineaID: {{ author.userinfo.account }}</div>
-            <div class="intro">简介: {{ author.userinfo.intro }}</div>
-            <div class="edit" @click="$router.push('/editinfo')" v-if="author.userinfo._id==user_id"><i class="el-icon-edit-outline"></i></div>
+            <div class="name">{{ author.user_name }}</div>
+            <div class="intro">pineaID: {{ author.account }}</div>
+            <div class="intro">简介: {{ author.intro }}</div>
+            <div class="edit" @click="$router.push('/editinfo')" v-if="author.id==user_id"><i class="el-icon-edit-outline"></i></div>
         </div>
         <div class="list">
-            <div :class="[{active:isactive},'item']"  @click="turn(0)">{{author.own_num}} 发布</div>
-            <div :class="[{active:!isactive},'item']" @click="turn(1)">{{author.collection_num}} 采集</div>
+            <div :class="[{active:isactive},'item']"  @click="turn(0)">{{author.work_count}} 发布</div>
+            <div :class="[{active:!isactive},'item']" @click="turn(1)">{{author.collection_count}} 采集</div>
         </div>
         <div class="content">
           <waterfall :imgsArr="list" @scrollReachBottom="getData"  @click="jumpTo" class="waterfall" :imgWidth="236" :gap="15" :maxCols="6">
@@ -21,18 +21,18 @@
               <p class="title">{{props.value.name}}</p>
               <p class="description">{{props.value.description}}</p>
               <div class="author_info">
-                <el-avatar :src=props.value.author.user_url class="author_avatar"></el-avatar>
+                <el-avatar :src=props.value.user.user_url class="author_avatar"></el-avatar>
                 <div class="info">
                     <div class="item">
-                      {{props.value.author.user_name}}
+                      {{props.value.user.user_name}}
                       <span class="gray">采集到</span>
                     </div>
-                    <div class="item"><span v-for="tag in props.value.type" :key="tag">{{tag}} </span></div>
+                    <div class="item"><span v-for="tag in props.value.types" :key="tag.id">{{tag.name}} </span></div>
                 </div>
                 <div class="right hot">
                   <!-- <i class="el-icon-star-on"></i>{{props.value.hot}} -->
-                  <el-button plain icon="el-icon-delete" v-if="isactive" @click.stop="del(props.value._id)">删除</el-button>
-                  <el-button plain v-else @click.stop="notcollected(props.value.collection_id)">取消收藏</el-button>
+                  <el-button plain icon="el-icon-delete" v-if="isactive" @click.stop="del(props.value.id)">删除</el-button>
+                  <el-button plain v-else @click.stop="notcollected(props.value.id)">取消收藏</el-button>
                 </div>
               </div>
             </div>
@@ -59,20 +59,27 @@ export default {
   methods: {
 		turn(a) {
 			if(a) { // 采集
-        this.$axios.post("/api/collectedworks",{ 
-          id: this.author.userinfo._id
+        this.$axios.post("/collection/list",{ 
+          id: this.author.id,
+          limit:30,
+          page: 1
         }).then(res => {
-          this.list = res.data
+          this.list = [];
+          for(let i in res.result.list) {
+            this.list[i] = res.result.list[i].work;
+          }
         })
         .catch(err=> {
           console.log(err)
         });
 				this.isactive = false;
       } else { // 发布
-        this.$axios.post("/api/ownworks",{ 
-          id: this.author.userinfo._id
+        this.$axios.post("/work/ownlist",{ 
+          id: this.author.id,
+          limit:30,
+          page: 1
         }).then(res => {
-          this.list = res.data
+          this.list = res.result.list
         })
         .catch(err=> {
           console.log(err)
@@ -95,7 +102,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$axios.post("/api/delpic",{ 
+        this.$axios.post("/delpic",{ 
           id: id
         }).then(res => {
           this.$message({
@@ -112,7 +119,7 @@ export default {
       });
     },
     notcollected(id){
-      this.$axios.post("/api/collect",{ // 取消收藏
+      this.$axios.post("/collect",{ // 取消收藏
         id: id,
         user_id: getLocalStorage('user_id'),
         work_id: this.$route.query.id
@@ -139,10 +146,11 @@ export default {
       id = this.$route.query.id
     } else id = getLocalStorage('user_id')
 
-    this.$axios.post("/api/userinfo",{ 
+    this.$axios.post("/user/userinfo",{ 
       id: id
     }).then(res => {
-      this.author = res.data
+      console.log(res)
+      this.author = res.result
       this.turn(0)
     })
     .catch(err=> {

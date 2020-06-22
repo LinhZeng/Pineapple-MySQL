@@ -3,6 +3,7 @@ var utils = require('../libs/utils'); // 工具类
 var Work = require('../models/index').Work; // 实体
 var Collection = require('../models/index').Collection;
 var Type = require('../models/index').Type; 
+var User = require('../models/index').User;
 
 module.exports = {
 
@@ -131,6 +132,9 @@ module.exports = {
                     model:Type, 
                     attributes:['id','name'], 
                     through: {attributes: []}, // 排除中间表
+                },{
+                    model:User, 
+                    attributes:['id','user_name','user_url'], 
                 }],
             }],
             limit: limit,

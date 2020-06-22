@@ -5,7 +5,7 @@ var Promise = require('bluebird');
 
 module.exports = {
     setToken: function(payload){
-        var expiresIn = Date.now() + 3600000 * 24 * 5; // 5天时限
+        var expiresIn = Date.now() + 3600000 //* 24 * 5; // 5天时限
         var token = jwt.sign(payload,config.token.secretOrPrivateKey,{expiresIn: expiresIn});
         return {
             token: token,
@@ -24,7 +24,7 @@ module.exports = {
         })
     },
     verifyRouterToken: function(req,res,next){
-        var token = req.headers.accesstoken;
+        var token = req.headers.token;
         if(!token) {
             res.json ({
                 code: '401',

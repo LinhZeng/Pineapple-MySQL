@@ -10,6 +10,9 @@ var config = {
         database: 'pineapple',
         port: 3306
     },
+    cors: { // 跨域
+        origin: ['http://localhost:8080']
+    },
     token: {
         secretOrPrivateKey: 'pasecret'
     },

@@ -64,7 +64,7 @@ export default {
       if(value === '') {
         callback(new Error('请输入原密码'))
       } else {
-        this.$axios.post("/api/login",{ 
+        this.$axios.post("/login",{ 
           id: getLocalStorage('user_id'),
           password: value
         }).then(res => {
@@ -105,7 +105,7 @@ export default {
           "Content-Type": "multipart/form-data"
         }
       }
-      this.$axios.post("/api/uploadpic", formData, config).then((res)=> {
+      this.$axios.post("/uploadpic", formData, config).then((res)=> {
         var urlname=`/static/img/${res.data}`;
         this.author.user_url = urlname;
       })
@@ -114,7 +114,7 @@ export default {
       if(this.isPsw) {
         this.$refs['password'].validate((valid)=> {
           if(valid) {
-            this.$axios.post("/api/editpsw",{ 
+            this.$axios.post("/editpsw",{ 
               id: getLocalStorage('user_id'),
               password: this.password.new
             }).then(res => {
@@ -128,7 +128,7 @@ export default {
           else this.$message.error('修改密码失败')
         })
       } else {
-        this.$axios.post("/api/editinfo",{ 
+        this.$axios.post("/editinfo",{ 
           id: getLocalStorage('user_id'),
           user_name: this.author.user_name,
           user_url: this.author.user_url,
@@ -150,7 +150,7 @@ export default {
     }
   },
   created() {
-    this.$axios.post("/api/userinfo",{ 
+    this.$axios.post("/userinfo",{ 
       id: getLocalStorage('user_id')
     }).then(res => {
       this.author = res.data.userinfo
