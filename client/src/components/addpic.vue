@@ -53,8 +53,8 @@ export default {
           "Content-Type": "multipart/form-data"
         }
       }
-      this.$axios.post("/common/upload", formData, config).then((res)=> {
-        var urlname=`http://localhost:3000/attchments/work/${res.data.result.url}`;
+      this.$axios.post("/common/workupload", formData, config).then((res)=> {
+        var urlname=`http://localhost:3000/attchments/work/${res.result.url}`;
         this.imageUrl = urlname;
       })
     },

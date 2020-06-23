@@ -35,13 +35,13 @@
           </el-form-item>
         </el-form>
       </div>
-			<div class="info_edit" v-else>
-				<el-form class="userinfo-form" status-icon :rules="formrules" ref="password" :model="password" label-width="80px">
-					<el-form-item label="原密码" prop="old">
-						<el-input type="password" v-model="password.old"></el-input>
+			<div class="info_edit" :hidden="!isPsw">
+				<el-form :model="ruleform" class="userinfo-form" status-icon :rules="rules" ref="ruleform" label-width="80px">
+					<el-form-item label="原密码" prop="oldpsw">
+						<el-input type="password" v-model="ruleform.oldpsw" autocomplete="off"></el-input>
           </el-form-item>
-          <el-form-item label="新密码" prop="new">
-            <el-input type="password" v-model="password.new"></el-input>
+          <el-form-item label="新密码" prop="newpsw">
+            <el-input type="password" v-model="ruleform.newpsw" autocomplete="off"></el-input>
           </el-form-item>
 					<el-form-item>
             <el-button type="primary" @click="onSubmit">确定</el-button>
@@ -60,100 +60,105 @@ export default {
   name: "editinfo",
   data() {
     var validatePass = (rule,value,callback) => {
-      console.log('jjjjj')
-      if(value === '') {
+      if(value==='') {
         callback(new Error('请输入原密码'))
       } else {
-        this.$axios.post("/login",{ 
-          id: getLocalStorage('user_id'),
+        this.$axios.post("/user/login",{ 
+          account: getLocalStorage('account'),
           password: value
         }).then(res => {
-          if(res.data.status == -2) {
+          console.log(res)
+         if(res.code < 0) {
             callback(new Error('密码错误'))
           } else callback()
+        }).catch(err => {
+          console.log(err);
         })
       }
-    }
+    };
     var validatePass2 = (rule,value,callback) => {
-      if(value === '') {
+      if(value==='') {
         callback(new Error('请输入新密码'))
       } else callback()
-    }
+    };
     return {
       author: {},
 			isPsw: false,
-			password: {
-				old: '',
-				new: ''
+			ruleform: {
+				oldpsw: '',
+				newpsw: ''
       },
-      formrules: {
-        old: [
-          { validator: validatePass, trigger: 'blur' }
-        ],
-        new: [
-          { validator: validatePass2, trigger: 'blur' }
-        ]
+      rules: {
+        oldpsw: [{ validator: validatePass, trigger: 'blur' }],
+        newpsw: [{ validator: validatePass2, trigger: 'blur' }]
       }
     };
   },
   methods: {
     imgchange(file) {
       var formData = new FormData()
-      formData.append("i", file.raw)
+      formData.append("file", file.raw)
       var config = {
         headers: {
           "Content-Type": "multipart/form-data"
         }
       }
-      this.$axios.post("/uploadpic", formData, config).then((res)=> {
-        var urlname=`/static/img/${res.data}`;
+      this.$axios.post("/common/avatarupload", formData, config).then((res)=> {
+        var urlname=`http://localhost:3000/attchments/avatar/${res.result.url}`;
         this.author.user_url = urlname;
       })
     },
     onSubmit() {
       if(this.isPsw) {
-        this.$refs['password'].validate((valid)=> {
+        this.$refs['ruleform'].validate((valid)=> {
           if(valid) {
-            this.$axios.post("/editpsw",{ 
+            this.$axios.post("/user/editpsw",{ 
               id: getLocalStorage('user_id'),
-              password: this.password.new
+              password: this.ruleform.newpsw
             }).then(res => {
               this.isPsw = false;
               this.$message({
                 message: '修改密码成功',
                 type: 'success'
               });
+            }).catch(err=>{
+              console.log(err)
+              this.$message.error('修改密码失败')
             })
           }
           else this.$message.error('修改密码失败')
         })
       } else {
-        this.$axios.post("/editinfo",{ 
+        this.$axios.post("/user/editinfo",{ 
           id: getLocalStorage('user_id'),
           user_name: this.author.user_name,
           user_url: this.author.user_url,
           intro: this.author.intro,
         }).then(res => {
-          this.$message({
-            message: '修改成功',
-            type: 'success'
-          });
+          if(res.code>0){
+            this.$message({
+              message: '修改成功',
+              type: 'success'
+            });
+          } else {
+            this.$message.error(res.msg)
+          }
         })
       }
     },
     back() {
-      this.password = {
-        old: '',
-				new: ''
+      this.ruleform = {
+        oldpsw: '',
+				newpsw: ''
       }
       this.isPsw = false;
     }
   },
   created() {
-    this.$axios.post("/userinfo",{ 
+    this.$axios.post("/user/userinfo",{ 
       id: getLocalStorage('user_id')
     }).then(res => {
-      this.author = res.data.userinfo
+      this.author = res.result
       console.log(this.author)
     })
     .catch(err=> {

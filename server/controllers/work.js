@@ -117,7 +117,8 @@ module.exports = {
         var offset = limit * ( (req.body.page||0) - 1);
         Work.findAndCountAll({
             where:{
-                userId: req.body.id
+                userId: req.body.id,
+                is_del: 0
             },
             include: [{ 
                 model:Type, 

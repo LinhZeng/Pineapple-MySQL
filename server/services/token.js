@@ -13,15 +13,14 @@ module.exports = {
         };
     },
     verifyToken: function(token, userid){
-        return new Promise(function(resolve, reject){
-            jwt.verify(token,config.token.secretOrPrivateKey,function(err,tokenData){
-                if(tokenData && tokenData.userid == userid) {
-                    resolve('ok')
-                } else {
-                    reject('fail')
-                }
-            })
-        })
+        var flag = jwt.verify(token,config.token.secretOrPrivateKey,function(err,tokenData){    
+            if(tokenData && tokenData.userid == userid) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+        return flag;
     },
     verifyRouterToken: function(req,res,next){
         var token = req.headers.token;

@@ -1,6 +1,5 @@
 var express = require('express');
 var router = express.Router();
-var checkToken = require('../middlewares/check').checkToken;
 var userDao = require('../controllers/user');
 var tokenService = require('../services/token');
 
@@ -10,7 +9,7 @@ router.get('/list', function(req, res, next) {
 });
 
 // 查询单个用户信息
-router.post('/userinfo', tokenService.verifyRouterToken,function(req, res, next) {
+router.post('/userinfo', function(req, res, next) {
   userDao.getUserInfo(req,res,next)
 });
 

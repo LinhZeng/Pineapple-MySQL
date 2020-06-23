@@ -3,6 +3,7 @@ var co = require('co'); // 自动执行异步函数
 var md5 = require('blueimp-md5'); // md5加密
 var tokenService = require('../services/token') // token服务
 var utils = require('../libs/utils'); // 工具类
+const e = require('express');
 var User = require('../models/index').User; // 实体
 var Work = require('../models/index').Work;
 var Collection = require('../models/index').Collection
@@ -162,28 +163,38 @@ module.exports = {
 
     // 修改个人信息
     updateUserInfo: function(req,res,next) {
-        co(function*(){
-            var resUser = yield User.update({
-                user_name: req.body.user_name,
-                user_url: req.body.user_url,
-                intro: req.body.intro
-            },{
-                where: {id: req.body.id}
-            })
-            console.log(resUser)
-            if(resUser) {
-                utils.handleJson({
-                    response: res,
-                    result: [],
-                    msg: 'OK'
+        // console.log(req)
+        var token = req.headers.token;
+        var flag = tokenService.verifyToken(token, req.body.id);
+        if(flag) {
+            co(function*(){
+                var resUser = yield User.update({
+                    user_name: req.body.user_name,
+                    user_url: req.body.user_url,
+                    intro: req.body.intro
+                },{
+                    where: {id: req.body.id}
                 })
-            }
-        }).catch(err => {
+                console.log(resUser)
+                if(resUser) {
+                    utils.handleJson({
+                        response: res,
+                        result: [],
+                        msg: 'OK'
+                    })
+                }
+            }).catch(err => {
+                utils.handleError({
+                    response: res,
+                    error: err
+                })
+            })
+        } else {
             utils.handleError({
                 response: res,
-                error: err
+                error: '没有权限修改'
             })
-        })
+        }  
     },
 
     // 修改密码

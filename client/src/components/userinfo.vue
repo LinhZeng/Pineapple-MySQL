@@ -102,14 +102,14 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$axios.post("/delpic",{ 
+        this.$axios.post("/work/deletework",{ 
           id: id
         }).then(res => {
           this.$message({
               message: '删除成功',
               type: 'success'
           });
-          this.author.own_num--;
+          this.author.work_count--;
           this.turn(0)
         })
         .catch(err=> {
@@ -119,16 +119,15 @@ export default {
       });
     },
     notcollected(id){
-      this.$axios.post("/collect",{ // 取消收藏
-        id: id,
+      this.$axios.post("/collection/cancel",{ // 取消收藏
         user_id: getLocalStorage('user_id'),
-        work_id: this.$route.query.id
+        work_id: id
       }).then(res => {
         this.$message({
               message: '取消收藏成功',
               type: 'success'
           });
-          this.author.collection_num--;
+          this.author.collection_count--;
           this.turn(1)
       })
       .catch(err=> {

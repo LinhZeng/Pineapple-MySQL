@@ -23,18 +23,18 @@ axios.interceptors.request.use(function(config){
 })
 
 axios.interceptors.response.use(function(response) {
-    console.log(response)
+    // console.log(response)
     var res = response.data;
     if(typeof(res)==='string' && res.indexOf('code') > -1 && res.indexOf('result') > -1) {
         res = JSON.parse(res);
     }
-    if(res.code === '200') {
-        return Promise.resolve(res);
-    } else if(res.code === '1001') { // 用户token过期需要重新登录
+    if(res.code === '1001') { // 用户token过期需要重新登录
         this.$message.error('登录信息已过期，请重新登录');
         localStorage.clear();
         router.push('/index')
         return Promise.reject(res)
+    } else {
+        return Promise.resolve(res);
     }
 }, function(err) {
     return Promise.reject(res)
