@@ -44,4 +44,9 @@ router.post('/delcomment', tokenService.verifyRouterToken, function(req,res,next
     workDao.delComment(req,res,next)
 })
 
+// 搜索
+router.post('/searchwork', function(req,res,next) {
+    workDao.searchwork(req,res,next)
+})
+
 module.exports = router;

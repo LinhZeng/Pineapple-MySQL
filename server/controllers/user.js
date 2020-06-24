@@ -1,12 +1,12 @@
 var co = require('co'); // 自动执行异步函数
-// var sequelize = require('sequelize')
 var md5 = require('blueimp-md5'); // md5加密
 var tokenService = require('../services/token') // token服务
 var utils = require('../libs/utils'); // 工具类
-const e = require('express');
 var User = require('../models/index').User; // 实体
 var Work = require('../models/index').Work;
 var Collection = require('../models/index').Collection
+var Sequelize = require('sequelize');
+var Op = Sequelize.Op;
 
 module.exports = {
     // 查询全部
@@ -220,5 +220,29 @@ module.exports = {
                 error: err
             })
         })
+    },
+
+    // 模糊查询
+    searchuser: function(req,res,next) {
+        co(function*(){
+            var list = yield User.findAll({
+                where: {
+                    user_name: {[Op.like]:'%'+req.body.name+'%'} 
+                }
+            });
+            // console.log(list)
+            utils.handleJson({
+                response: res,
+                result: {
+                    list: list
+                },
+            })
+        }).catch(err => {
+            console.log(err)
+            utils.handleError({
+                response: res,
+                error: err
+            })
+        })   
     }
 }

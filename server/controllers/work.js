@@ -1,9 +1,11 @@
-// var co = require('co'); // 自动执行异步函数
+var co = require('co'); // 自动执行异步函数
 var utils = require('../libs/utils'); // 工具类
 var Work = require('../models/index').Work; // 实体
 var Type = require('../models/index').Type; 
 var Comment = require('../models/index').Comment;
 var User = require('../models/index').User;
+var Sequelize = require('sequelize');
+var Op = Sequelize.Op;
 
 module.exports = {
     // 种类查询
@@ -234,5 +236,32 @@ module.exports = {
                 error:err
             })
         })
+    },
+
+    // 模糊查询
+    searchwork: function(req,res,next) {
+        co(function*(){
+            var list = yield Work.findAll({
+                where: {
+                    [Op.or]: [ 
+                        { name: {[Op.like]:'%'+req.body.name+'%'} },
+                        { description: {[Op.like]:'%'+req.body.name+'%'} },
+                    ]
+                }
+            });
+            // console.log(list)
+            utils.handleJson({
+                response: res,
+                result: {
+                    list: list
+                },
+            })
+        }).catch(err => {
+            console.log(err)
+            utils.handleError({
+                response: res,
+                error: err
+            })
+        })   
     }
 }

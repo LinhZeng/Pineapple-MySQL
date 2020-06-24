@@ -33,4 +33,9 @@ router.post('/editpsw', tokenService.verifyRouterToken, function(req, res, next)
   userDao.updateUserPSW(req,res,next)
 });
 
+// 搜索
+router.post('/searchuser', function(req, res, next) {
+  userDao.searchuser(req,res,next)
+});
+
 module.exports = router;
