@@ -6,9 +6,9 @@
   box-shadow: 0 1px 3px rgba(0,0,0,.02), 0 16px 32px -4px rgba(0,0,0,.17) !important;
   transform: translateY(-1px);
 }
-.vue-waterfall-easy-container .vue-waterfall-easy-scroll {
-  overflow: hidden !important;
-}
+// .vue-waterfall-easy-container .vue-waterfall-easy-scroll {
+//   overflow: hidden !important;
+// }
 .vue-waterfall-easy-container .vue-waterfall-easy a.img-wraper > img{
   border-radius: 4px 4px 0px 0px;
 }
@@ -44,9 +44,12 @@
         }
       }
       .right {
-        float: right;
-        margin-top: 10px;
+        // float: right;
+        // margin-top: 10px;
         // text-align: right;
+        position: absolute;
+        right: 20px;
+        top: -48px;
         .el-button {
           padding: 5px 5px;
           display: block;

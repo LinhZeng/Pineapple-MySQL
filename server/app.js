@@ -24,7 +24,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // 配置跨域
 app.use(cors({
-  origin: config.cors.origin,
+  origin: '*',//config.cors.origin,
   methods: "PUT,POST,GET,DELETE,OPTIONS",
 }))
 

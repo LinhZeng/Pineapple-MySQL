@@ -11,25 +11,27 @@
           <div :class="[{active:actindex==tag.id},'item']" v-for="tag in tags" :key="tag.id" @click="search(!isactive,tag.id)">{{ tag.name }}</div>
         </div>
       </div>
-      <waterfall :imgsArr="dataArr" @scrollReachBottom="getData" @click="jumpTo" class="waterfall" :imgWidth="236" :gap="15" :maxCols="6">
-        <div class="info" slot-scope="props">
-          <p class="title">{{props.value.name}}</p>
-          <p class="description">{{props.value.description}}</p>
-          <div class="author_info">
-            <el-avatar :src="props.value.user.user_url" class="author_avatar"></el-avatar>
-            <div class="info">
-              <div class="item">
-                {{props.value.user.user_name}}
-                <span class="gray">采集到</span>
+      <div class="waterfall_box">
+        <waterfall :imgsArr="dataArr" @scrollReachBottom="getData()" @click="jumpTo" class="waterfall" :imgWidth="236" :gap="15" :maxCols="6">
+          <div class="info" slot-scope="props">
+            <p class="title">{{props.value.name}}</p>
+            <p class="description">{{props.value.description}}</p>
+            <div class="author_info">
+              <el-avatar :src="props.value.user.user_url" class="author_avatar"></el-avatar>
+              <div class="info">
+                <div class="item">
+                  {{props.value.user.user_name}}
+                  <span class="gray">采集到</span>
+                </div>
+                <div class="item"><span v-for="tag in props.value.types" :key="tag.id">{{tag.name}} </span></div>
               </div>
-              <div class="item"><span v-for="tag in props.value.types" :key="tag.id">{{tag.name}} </span></div>
-            </div>
-            <div class="right hot">
-              <i class="el-icon-star-on"></i>{{props.value.hot}}
+              <div class="right hot">
+                <i class="el-icon-star-on"></i>{{props.value.hot}}
+              </div>
             </div>
           </div>
-        </div>
-      </waterfall>
+        </waterfall>
+      </div>
     </div>
   </div>
 </template>
@@ -44,7 +46,8 @@ export default {
       dataArr: [],
       isactive: true,
       actindex: 1,
-      tags:[]
+      tags:[],
+      page:1
     };
   },
   methods: {
@@ -56,8 +59,8 @@ export default {
       this.$axios.post("/work/list",{
         type: typeid,
         order: a,
-        limit: 30,
-        page: 1
+        limit: 20,
+        page: this.page
       }).then(res => {
         console.log(res)
         this.dataArr = res.result.list;
@@ -75,12 +78,27 @@ export default {
       });
       window.open(routeUrl.href, "_blank");
     },
-    getData() {}
+    getData() {
+      console.log('getdata')
+      this.page++;
+      this.$axios.post("/work/list",{
+        type: typeid,
+        order: a,
+        limit: 20,
+        page: this.page
+      }).then(res => {
+        console.log(res)
+        this.dataArr = this.dataArr.concat(res.result.list);
+      })
+      .catch(err=> {
+        console.log(err)
+      });
+    }
   },
   created() {
     this.$axios.post("/work/taglist",{
     }).then(res => {
-      this.tags = res.data.result.list;
+      this.tags = res.result.list;
     })
     .catch(err=> {
       console.log(err)
@@ -147,5 +165,8 @@ export default {
       }
     }
   }
+}
+.waterfall_box {
+  height: 100%;
 }
 </style>

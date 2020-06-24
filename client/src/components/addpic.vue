@@ -24,7 +24,7 @@
       </div>
 			<div>
 				<el-button type="primary" @click="onSubmit">确定</el-button>
-        <el-button @click="isPsw = false">返回</el-button>
+        <el-button @click="$router.back()">返回</el-button>
 			</div>
 		</div>
   </div>
@@ -82,7 +82,7 @@ export default {
   created(){
     this.$axios.post("/work/taglist",{
     }).then(res => {
-      this.tags = res.data.result.list;
+      this.tags = res.result.list;
     })
     .catch(err=> {
       console.log(err)
