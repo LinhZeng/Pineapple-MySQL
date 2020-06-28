@@ -263,5 +263,33 @@ module.exports = {
                 error: err
             })
         })   
+    },
+    
+    // 查询分类最热
+    gettagworklist: function(req,res,next) {
+        Work.findAndCountAll({
+            where: {is_del: 0},
+            include: [{ 
+                model:Type, 
+                through: {attributes: []}, // 排除中间表
+                where: {id:req.body.type}
+            }],
+            limit: 10,
+            offset: 0,
+            order: [['hot', 'DESC']]
+        }).then(result => {
+            var userList = result.rows || [];
+            utils.handleJson({
+                response: res,
+                result: {
+                    list: userList
+                },
+            })
+        }).catch(function(err){
+            utils.handleError({
+                response:res,
+                error: err
+            })
+        })
     }
 }

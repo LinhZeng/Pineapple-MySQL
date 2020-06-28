@@ -3,7 +3,7 @@
   <Nav></Nav>
   <div class="main">
     <div class="right_box">
-      <div class="list" v-for="(tag,index) in taglist" :key="index"> 
+      <div class="list" v-for="tag in taglist" :key="taglist.id"> 
         <div class="type_name"># {{ tag.name }}</div>
         <div class="waterfall-container">
           <div class="waterfall-item" v-for="(list,i) in tag.list" :key="i"><img :src="list.src"></div>
@@ -12,17 +12,17 @@
     </div>
     <div class="left_box">
       <div class="pic">
-        <el-button type="primary" icon="el-icon-star-on"  v-if="collection.status" class="collected_btn"  @click="collect">取消收藏</el-button>
-        <el-button type="primary" icon="el-icon-star-off" v-else @click="collect">收藏</el-button>
+        <el-button type="primary" icon="el-icon-star-on"  v-if="isCollected" class="collected_btn"  @click="collect(0)">取消收藏</el-button>
+        <el-button type="primary" icon="el-icon-star-off" v-else @click="collect(1)">收藏</el-button>
         <el-button plain icon="el-icon-zoom-in" class="right"></el-button>
         <div class="pic_title">{{data.name}}</div>
         <img :src="data.src">
         <el-tag v-for="tag in data.types" :key="tag.id">{{ tag.name }}</el-tag>
-        <el-button type="primary" icon="el-icon-star-on" class="collected_btn right" v-if="collection.status" @click="collect">{{data.hot}}</el-button>
-        <el-button type="primary" icon="el-icon-star-off" class="right" v-else @click="collect">{{data.hot}}</el-button>
+        <el-button type="primary" icon="el-icon-star-on" class="collected_btn right" v-if="isCollected" @click="collect(0)">{{data.hot}}</el-button>
+        <el-button type="primary" icon="el-icon-star-off" class="right" v-else @click="collect(1)">{{data.hot}}</el-button>
       </div>
       <div class="author">
-        <img :src=data.user.user_url class="author_avatar">
+        <img :src="data.user.user_url" class="author_avatar">
         <div class="user_info">
           <div class="name">{{ data.user.user_name }}</div>
           <div>发布于 {{ data.createDate }}</div>
@@ -49,7 +49,7 @@
                   <span>: {{ item.content }}</span>
               </div>
               <div class="comment-time">{{ item.createDate }}</div>
-              <i class="el-icon-delete" @click="comment(0,index)" v-if="item.user.id == user.user_id">删除</i>
+              <i class="el-icon-delete" @click="comment(0,item.id)" v-if="item.user.id == user.user_id">删除</i>
           </div>
         </div>
       </div>
@@ -71,48 +71,70 @@ export default {
       taglist:[],
       mycomment:'',
       unlisted: false,
-      collection:{},
+      // collection:{},
+      isCollected:0
     };
   },
   methods: {
-    collect() {
-      this.$axios.post("/collect",{ // 收藏/取消收藏
-        id: this.collection.id,
-        user_id: this.user.user_id,
-        work_id: this.$route.query.id
-      }).then(res => {
-        console.log(res)
-        this.collection = res.data
-      })
-      .catch(err=> {
-        console.log(err)
-      });
+    getDetail() {
+      this.$axios.post("/work/detail",{ // 获取详情
+            id: this.$route.query.id
+          }).then(res => {
+            //console.log(res)
+            this.data = res.result.work;
+          })
+          .catch(err=> {
+            console.log(err)
+          });
     },
-    formatDateTime(date) {
-      var y = date.getFullYear();
-        var m = date.getMonth() + 1;
-        m = m < 10 ? ('0' + m) : m;
-        var d = date.getDate();
-        d = d < 10 ? ('0' + d) : d;
-        var h = date.getHours();
-        h=h < 10 ? ('0' + h) : h;
-        var minute = date.getMinutes();
-        minute = minute < 10 ? ('0' + minute) : minute;
-        var second=date.getSeconds();
-        second=second < 10 ? ('0' + second) : second;
-        return y + '-' + m + '-' + d+' '+h+':'+minute+':'+second;
+    collect(type) {
+      if(type) {
+        this.$axios.post("/collection/collect",{ // 收藏
+          user_id: this.user.user_id,
+          work_id: this.$route.query.id
+        }).then(res => {
+          console.log(res)
+          this.isCollected = res.result.isCollected
+        })
+        .catch(err=> {
+          console.log(err)
+        });
+      } else {
+        this.$axios.post("/collection/cancel",{ // 取消收藏
+          user_id: this.user.user_id,
+          work_id: this.$route.query.id
+        }).then(res => {
+          console.log(res)
+          this.isCollected = res.result.isCollected
+        })
+        .catch(err=> {
+          console.log(err)
+        });
+      }
     },
     comment(opt,index) {
       if(opt){
-        this.data.comments.unshift({
+        this.$axios.post("/work/addcomment",{
+          work_id: this.data.id,
           user_id: this.user.user_id,
-          user_name: this.user.user_name,
-          user_url: this.user.user_url,
-          create_time: this.formatDateTime(new Date()),
-          content: this.mycomment,
+          content: this.mycomment
+        }).then(res => {
+          console.log(res)
+          this.getDetail()
         })
+        .catch(err=> {
+          console.log(err)
+        });
       } else {
-        this.data.comments.splice(index,1);
+        this.$axios.post("/work/delcomment",{
+          id:index
+        }).then(res => {
+          console.log(res)
+          this.getDetail()
+        })
+        .catch(err=> {
+          console.log(err)
+        });
       }
       console.log(this.data.comments)
       this.$axios.post("/editwork",{
@@ -131,15 +153,17 @@ export default {
       id: this.$route.query.id
     }).then(res => {
       //console.log(res)
-      this.data = res.data.result.work;
-      this.data.type.forEach(e => {
-        this.$axios.post("/taglist",{ // 标签列表
-          tag: e
+      this.data = res.result.work;
+      // console.log(this.data)
+      this.data.types.forEach(e => {
+        this.$axios.post("/work/tagworklist",{ // 标签列表
+          type: e.id
         }).then(ress => {
           console.log(ress)
           this.taglist.push({
-            name:e,
-            list: ress.data,  
+            id:e.id,
+            name: e.name,
+            list: ress.result.list,  
           });
         })
         .catch(errr=> {
@@ -158,13 +182,14 @@ export default {
         user_name: getLocalStorage('user_name'),
         user_url: getLocalStorage('user_url'),
       }
+      console.log(this.user)
     }
-    this.$axios.post("/iscollected",{ // 是否收藏
+    this.$axios.post("/collection/iscollected",{ // 是否收藏
       user_id: this.user.user_id,
       work_id: this.$route.query.id
     }).then(res => {
-      this.collection = res.data
-      console.log(this.collection.status);
+      // console.log(res)
+      this.isCollected = res.result.isCollected
     })
     .catch(err=> {
       console.log(err)

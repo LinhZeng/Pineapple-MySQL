@@ -2,12 +2,12 @@
   <div style="z-index: 99;position: sticky;top: 0">
     <div class="nav">
       <div class="com">
-        <div class="nav_logo" @click="$router.push('/index')">
+        <div class="nav_logo" @click="$router.push('/')">
           <img src="../assets/logo.png" class="nav_logo_pic" />
         </div>
         <div class="nav_menu">
           <el-menu :default-active="$route.path" class="el-menu-demo" mode="horizontal" router>
-            <el-menu-item index="/index">首页</el-menu-item>
+            <el-menu-item index="/">首页</el-menu-item>
             <el-menu-item index="/userinfo">我的</el-menu-item>
             <!-- <div class="nav_message">
                                 <router-link to="/message"><i class="el-icon-chat-dot-round"></i></router-link>
@@ -16,11 +16,10 @@
         </div>
         <el-input class="search" v-model="keyword"
           placeholder="请输入内容"
-          @select="handleSelect"
           @keyup.enter.native="search">
           <el-select v-model="preSearch" slot="prepend">
-            <el-option label="采集" value="1"></el-option>
-            <el-option label="用户" value="2"></el-option>
+            <el-option label="采集" value="work"></el-option>
+            <el-option label="用户" value="user"></el-option>
           </el-select>
           <el-button slot="append" icon="el-icon-search"  @click="search"></el-button>
         </el-input>
@@ -95,11 +94,11 @@ export default {
   name: "nav",
   data() {
     return {
-      activeIndex: "/index",
+      activeIndex: "/",
       userData: {},
       isActived: true,
       keyword: "",
-      preSearch: '1',
+      preSearch: 'work',
       unlisted: false,
       form:{
         account:'',
@@ -130,9 +129,6 @@ export default {
       localStorage.clear();
       this.unlisted = true;
     },
-    handleSelect(item) {
-      console.log(item);
-    },
     onSubmit(){
       var req_url; 
       if(this.activeName='登录') req_url = '/user/login';
@@ -151,14 +147,18 @@ export default {
           });
           this.resetForm();
           this.panel_open=false;
-          setLocalStorage('account',res.result.user.account);
-          setLocalStorage('user_id',res.result.user.id);
-          setLocalStorage('user_name',res.result.user.user_name);
-          setLocalStorage('intro',res.result.user.intro);
-          setLocalStorage('user_url',res.result.user.user_url);
           setLocalStorage('token',res.result.token.token);
           setToken(res.result.token.token)
-          this.userData = res.result.user;
+          this.$axios.post('/user/userinfo',{
+            id: res.result.user.id
+          }).then(res2 => {
+            setLocalStorage('account',res2.result.account);
+            setLocalStorage('user_id',res2.result.id);
+            setLocalStorage('user_name',res2.result.user_name);
+            setLocalStorage('intro',res2.result.intro);
+            setLocalStorage('user_url',res2.result.user_url);
+            this.userData = res2.result;
+          })
           this.unlisted = false;
         }
       })
@@ -171,13 +171,14 @@ export default {
       this.form.password = ''
     },
     search(){
-      // var route = this.$router.resolve({
-      //     path:'/searchResult',
-      //     query:{
-      //         q:this.state
-      //     }
-      // })
-      // window.open(route.href,'_blank')
+      var route = this.$router.resolve({
+          path:'/search',
+          query:{
+              type: this.preSearch,
+              name: this.keyword
+          }
+      })
+      window.open(route.href,'_blank')
     },
   }
 };

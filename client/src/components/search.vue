@@ -113,6 +113,18 @@ export default {
     },
     getData() {}
   },
+  created() {
+    console.log('this is search')
+    var url = '/' + this.$route.query.type + '/' + this.$route.query.name;
+    this.$axios.post(url, {
+      name: this.$route.query.name
+    }).then(res => {
+      console.log(res)
+      this.dataArr = res.result.list;
+    }).catch(err => {
+      console.log(err)
+    })
+  },
   components: {
     Nav,
     waterfall

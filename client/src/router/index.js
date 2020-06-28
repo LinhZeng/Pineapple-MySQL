@@ -17,7 +17,7 @@ export default new Router({
       component: Index
     },
     {
-      path:'detail',
+      path:'/detail',
       name:'detail',
       component:Detail
     },
@@ -32,7 +32,7 @@ export default new Router({
       component:Editinfo
     },
     {
-      path:'search',
+      path:'/search',
       name:'search',
       component:Search
     },

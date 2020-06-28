@@ -49,4 +49,9 @@ router.post('/searchwork', function(req,res,next) {
     workDao.searchwork(req,res,next)
 })
 
+// 查询分类最热
+router.post('/tagworklist', function(req,res,next) {
+    workDao.gettagworklist(req,res,next)
+})
+
 module.exports = router;
