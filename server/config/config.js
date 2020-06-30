@@ -4,9 +4,9 @@ var path = require('path');
 var config = {
     // env: 'dev', // 当前环境，便于后面业务中判断
     mysql: {
-        host: '127.0.0.1',
+        host: 'localhost',
         user: 'root',
-        password: '',
+        password: '123456',
         database: 'pineapple',
         port: 3306
     },
