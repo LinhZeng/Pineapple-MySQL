@@ -5,7 +5,7 @@ MAINTAINER linhz
 # 将本机根目录所有文件拷贝到容器的根目录下
 COPY . .
 # 容器对外暴露的端口
-EXPOSE 5000
+EXPOSE 8080
 # 安装node依赖
 RUN npm install
 # 在容器环境里执行的命令
