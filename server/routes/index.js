@@ -5,6 +5,7 @@ module.exports = function(app) {
   app.use('/work',require('./work'));
   app.use('/collection',require('./collection'));
   app.use('/', function(req, res, next) {
+    console.log('welcome to pineapple')
     res.render('index', { title: 'Express' });
   });
 }

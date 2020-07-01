@@ -1,12 +1,12 @@
 # 项目的基础依赖
-FROM node:14.4-alpine
+FROM node
 # 项目维护者 
 MAINTAINER linhz 
 # 将本机根目录所有文件拷贝到容器的根目录下
-COPY /project/Pineapple-MySQL/server .
+COPY . .
 # 容器对外暴露的端口
-EXPOSE 3000
+EXPOSE 5000
 # 安装node依赖
-RUN npm i
+RUN npm install
 # 在容器环境里执行的命令
 CMD npm start
