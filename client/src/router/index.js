@@ -22,12 +22,12 @@ export default new Router({
       component:Detail
     },
     {
-      path:'userinfo',
+      path:'/userinfo',
       name:'userinfo',
       component:Userinfo
     },
     {
-      path:'editinfo',
+      path:'/editinfo',
       name:'editinfo',
       component:Editinfo
     },
@@ -37,7 +37,7 @@ export default new Router({
       component:Search
     },
     {
-      path:'addpic',
+      path:'/addpic',
       name:'addpic',
       component:Addpic
     },
